@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # Author: Alexander Schmid
+# Company: Protect7
+# Version: Alpha
 
 # This should be a script, which searches alive hosts in a range
 # With the result we make a versionscan on the alive hosts and create a short overview of it
@@ -179,6 +181,12 @@ def extract_information(directory, openvasTCP, openvasUDP, skip = False) :
     cmd = ["touch", directory + "/overview.txt"]
     run_command(cmd)
 
+    if os.path.isfile(directory + "/overview.csv") :
+        cmd = ["rm", directory + "/overview.csv"]
+        run_command(cmd)
+    cmd = ["touch", directory + "/overview.csv"]
+    run_command(cmd)
+
     try:
         treeTCP = elementTree.parse(directory + "/nmap/versionscan_tcp.xml")
     except elementTree.ParseError as e:
@@ -272,6 +280,27 @@ def extract_information(directory, openvasTCP, openvasUDP, skip = False) :
             outfile.write("\t" if len(overview[key][port]['product']) > 7 else "\t\t")
             outfile.write(overview[key][port]['versionnumber'] + "\n")
         outfile.write("\n\n")
+    outfile.close()
+
+    outfile = open(directory + "/overview.csv", "at")
+    outfile.write("IP,")
+    outfile.write("Port,")
+    outfile.write("Protocol,")
+    outfile.write("State,")
+    outfile.write("Confidence,")
+    outfile.write("Name,")
+    outfile.write("Product,")
+    outfile.write("Version\n")
+    for key in overview : 
+        for port in overview[key] :
+            outfile.write(key + ",")
+            outfile.write(port + ",")
+            outfile.write(overview[key][port]['protocol'] + ",")
+            outfile.write(overview[key][port]['state'] + ",")
+            outfile.write(overview[key][port]['conf'] + ",")
+            outfile.write(overview[key][port]['name'] + ",")
+            outfile.write(overview[key][port]['product'] + ",")
+            outfile.write(overview[key][port]['versionnumber'] + "\n")
     outfile.close()
 
     if skip:
