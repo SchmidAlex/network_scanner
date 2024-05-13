@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # Author: Alexander Schmid
-# Company: Protect7
 # Version: Alpha
 
 # This should be a script, which searches alive hosts in a range
